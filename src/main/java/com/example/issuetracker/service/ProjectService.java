@@ -22,7 +22,11 @@ public class ProjectService {
         this.projectMapper = projectMapper;
     }
 
+<<<<<<< HEAD
     public ProjectDTO createProject(ProjectDTO projectDTO){
+=======
+    public ProjectDTO createProyect(ProjectDTO projectDTO){
+>>>>>>> abccc12 (Creación de los servicios y repositorios de Issue y Project)
         Project project = projectMapper.toEntity(projectDTO);
         Project savedProject = projectRepository.save(project);
         return projectMapper.toDTO(savedProject);
