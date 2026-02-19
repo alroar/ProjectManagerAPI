@@ -20,7 +20,7 @@ public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tokenId;
+    private Long id;
     private String tokenValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
