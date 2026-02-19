@@ -22,7 +22,7 @@ public class ProjectService {
         this.projectMapper = projectMapper;
     }
 
-    public ProjectDTO createProyect(ProjectDTO projectDTO){
+    public ProjectDTO createProject(ProjectDTO projectDTO){
         Project project = projectMapper.toEntity(projectDTO);
         Project savedProject = projectRepository.save(project);
         return projectMapper.toDTO(savedProject);

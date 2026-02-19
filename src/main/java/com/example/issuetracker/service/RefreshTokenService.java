@@ -3,7 +3,7 @@ package com.example.issuetracker.service;
 
 import com.example.issuetracker.entity.RefreshToken;
 import com.example.issuetracker.entity.User;
-import com.example.issuetracker.exceptions.TokenException;
+import com.example.issuetracker.exceptions.TokenNotFoundException;
 import com.example.issuetracker.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
@@ -23,11 +23,11 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
-    public RefreshToken verifyExpiration(RefreshToken refreshToken) throws TokenException {
+    public RefreshToken verifyExpiration(RefreshToken refreshToken) throws TokenNotFoundException {
         if(refreshToken.getExpiryDate().isBefore(Instant.now())){
             refreshToken.setRevoked(true);
             refreshTokenRepository.save(refreshToken);
-            throw new TokenException("Token have expired");
+            throw new TokenNotFoundException("Token have expired");
         }
 
         return refreshToken;

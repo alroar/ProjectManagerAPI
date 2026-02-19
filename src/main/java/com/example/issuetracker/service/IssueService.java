@@ -2,8 +2,10 @@ package com.example.issuetracker.service;
 
 import com.example.issuetracker.dto.IssueDTO;
 import com.example.issuetracker.entity.Issue;
+import com.example.issuetracker.entity.IssueStatus;
 import com.example.issuetracker.entity.Project;
 import com.example.issuetracker.entity.User;
+import com.example.issuetracker.exceptions.BussinessException;
 import com.example.issuetracker.exceptions.IssueNotFoundException;
 import com.example.issuetracker.exceptions.ProjectNotFoundException;
 import com.example.issuetracker.exceptions.UserNotFoundException;
@@ -11,6 +13,7 @@ import com.example.issuetracker.mappers.IssueMapper;
 import com.example.issuetracker.repository.IssueRepository;
 import com.example.issuetracker.repository.ProjectRepository;
 import com.example.issuetracker.repository.UserRepository;
+import com.example.issuetracker.util.IssueTransitions;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -82,6 +85,42 @@ public class IssueService {
         issue.setProject(project);
         issueRepository.save(issue);
 
+        return issueMapper.toDTO(issue);
+    }
+
+    public void deleteIssue(Long id) throws Exception{
+        issueRepository.findById(id)
+                .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
+        issueRepository.deleteById(id);
+    }
+
+    public IssueDTO assignUserToIssue(Long issueId, Long userId) throws Exception{
+        Issue issue = issueRepository.findById(issueId)
+                .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
+
+        if(issue.getIssueStatus() != IssueStatus.CLOSED){
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException("User couldn't be found"));
+            issue.setUser(user);
+            issueRepository.save(issue);
+        }else{
+            throw new BussinessException("Cannot assign user to a CLOSED issue");
+        }
+
+        return issueMapper.toDTO(issue);
+    }
+
+    public IssueDTO changeIssueStatus(Long id, IssueStatus issueStatus) throws Exception{
+        Issue issue = issueRepository.findById(id)
+                .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
+
+        if(!IssueTransitions.isValidTransition(issue.getIssueStatus(), issueStatus)){
+            throw new BussinessException("Invalid transition. Cannot move from "
+            +issue.getIssueStatus() + " to " + issueStatus + ". Allowed: " + IssueTransitions.VALID_TRANSITIONS.get(issue.getIssueStatus()));
+        }
+
+        issue.setIssueStatus(issueStatus);
+        issueRepository.save(issue);
         return issueMapper.toDTO(issue);
     }
 }
