@@ -38,6 +38,7 @@ public class Project {
         this.updatedAt = Instant.now();
     }
 
+    @PreUpdate
     public void preUpdate(){
         this.updatedAt = Instant.now();
     }

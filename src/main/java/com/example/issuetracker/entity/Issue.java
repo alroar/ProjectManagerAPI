@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 
 @Getter
 @Setter
@@ -22,7 +24,10 @@ public class Issue {
 
     @NotBlank
     private String title;
+    @NotBlank
     private String description;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     @Enumerated(EnumType.STRING)
     private IssueStatus issueStatus;
@@ -34,5 +39,18 @@ public class Issue {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+
+
+    @PrePersist
+    public void prePersist(){
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        this.updatedAt = Instant.now();
+    }
 
 }

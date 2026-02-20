@@ -1,6 +1,9 @@
 package com.example.issuetracker.service;
 
-import com.example.issuetracker.dto.IssueDTO;
+import com.example.issuetracker.dto.IssueCreateDTO;
+import com.example.issuetracker.dto.IssueResponseDTO;
+import com.example.issuetracker.dto.IssueStatusUpdateDTO;
+import com.example.issuetracker.dto.IssueUpdateDTO;
 import com.example.issuetracker.entity.Issue;
 import com.example.issuetracker.entity.IssueStatus;
 import com.example.issuetracker.entity.Project;
@@ -37,29 +40,25 @@ public class IssueService {
         this.userRepository = userRepository;
     }
 
-    public IssueDTO createIssue(IssueDTO issueDTO) throws Exception{
+    public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO) throws Exception{
 
-        projectRepository.findById(issueDTO.getProjectId())
+        projectRepository.findById(issueCreateDTO.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
-        if(issueDTO.getUserId() != null){
-            userRepository.findById(issueDTO.getUserId())
-                    .orElseThrow(() -> new UserNotFoundException("User couldn't be found"));
-        }
-
-        Issue issue = issueMapper.toEntity(issueDTO);
+        Issue issue = issueMapper.toEntity(issueCreateDTO);
+        issue.setIssueStatus(IssueStatus.OPEN);
         Issue savedIssue = issueRepository.save(issue);
         return issueMapper.toDTO(savedIssue);
     }
 
-    public IssueDTO getIssueById(Long id) throws Exception{
+    public IssueResponseDTO getIssueById(Long id) throws Exception{
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
 
         return issueMapper.toDTO(issue);
     }
 
-    public List<IssueDTO> getAllIssues(){
+    public List<IssueResponseDTO> getAllIssues(){
         List<Issue> issues = issueRepository.findAll();
 
         return issues.stream()
@@ -67,21 +66,13 @@ public class IssueService {
                 .collect(Collectors.toList());
     }
 
-    public IssueDTO updateIssue(Long id, IssueDTO issueDTO) throws Exception{
+    public IssueResponseDTO updateIssue(Long id, IssueUpdateDTO issueUpdateDTO) throws Exception{
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
-        if(issueDTO.getUserId() != null){
-            User user = userRepository.findById(issueDTO.getUserId())
-                    .orElseThrow(() -> new UserNotFoundException("User couldn't be found"));
-            issue.setUser(user);
-        }
-        Project project = projectRepository.findById(issueDTO.getProjectId())
+        Project project = projectRepository.findById(issueUpdateDTO.getProjectId())
                         .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
-        issue.setTitle(issueDTO.getTitle());
-        issue.setDescription(issueDTO.getDescription());
-        issue.setIssueStatus(issueDTO.getIssueStatus());
-
+        issueMapper.updateEntityFromDTO(issueUpdateDTO, issue);
         issue.setProject(project);
         issueRepository.save(issue);
 
@@ -94,7 +85,7 @@ public class IssueService {
         issueRepository.deleteById(id);
     }
 
-    public IssueDTO assignUserToIssue(Long issueId, Long userId) throws Exception{
+    public IssueResponseDTO assignUserToIssue(Long issueId, Long userId) throws Exception{
         Issue issue = issueRepository.findById(issueId)
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
 
@@ -110,16 +101,16 @@ public class IssueService {
         return issueMapper.toDTO(issue);
     }
 
-    public IssueDTO changeIssueStatus(Long id, IssueStatus issueStatus) throws Exception{
+    public IssueResponseDTO changeIssueStatus(Long id, IssueStatusUpdateDTO issueStatusUpdateDTO) throws Exception{
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
 
-        if(!IssueTransitions.isValidTransition(issue.getIssueStatus(), issueStatus)){
+        if(!IssueTransitions.isValidTransition(issue.getIssueStatus(), issueStatusUpdateDTO.getIssueStatus())){
             throw new BussinessException("Invalid transition. Cannot move from "
-            +issue.getIssueStatus() + " to " + issueStatus + ". Allowed: " + IssueTransitions.VALID_TRANSITIONS.get(issue.getIssueStatus()));
+            +issue.getIssueStatus() + " to " + issueStatusUpdateDTO.getIssueStatus() + ". Allowed: " + IssueTransitions.VALID_TRANSITIONS.get(issue.getIssueStatus()));
         }
 
-        issue.setIssueStatus(issueStatus);
+        issueMapper.updateStatusFromDTO(issueStatusUpdateDTO, issue);
         issueRepository.save(issue);
         return issueMapper.toDTO(issue);
     }

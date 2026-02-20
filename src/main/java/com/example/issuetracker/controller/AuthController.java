@@ -9,7 +9,6 @@ import com.example.issuetracker.service.RefreshTokenService;
 import com.example.issuetracker.service.UserService;
 import com.example.issuetracker.util.JwtProvider;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
