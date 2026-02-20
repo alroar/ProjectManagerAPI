@@ -38,5 +38,17 @@ public class RefreshTokenService {
         refreshTokenRepository.save(token);
     }
 
+    public RefreshToken save(RefreshToken refreshToken){
+        return refreshTokenRepository.save(refreshToken);
+    }
+
+    public void revokeByJwtId(String jwtId) throws TokenNotFoundException {
+        RefreshToken token = refreshTokenRepository.findByJwtId(jwtId)
+                .orElseThrow(() -> new TokenNotFoundException("Token not found"));
+
+        token.setRevoked(true);
+        refreshTokenRepository.save(token);
+    }
+
 
 }

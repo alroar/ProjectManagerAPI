@@ -31,6 +31,8 @@ public class RefreshToken {
     private Instant creationDate;
     private Instant expiryDate;
 
+    private String jwtId;
+
     public static RefreshToken of(User user){
         RefreshToken token = new RefreshToken();
         token.setUser(user);

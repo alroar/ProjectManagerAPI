@@ -35,11 +35,18 @@ public class RefreshTokenController {
         RefreshToken refreshToken = refreshTokenRepository.findByTokenValue(tokenValue)
                 .orElseThrow(() -> new TokenNotFoundException("Token couldn't be found"));
 
+        if(refreshToken.isRevoked()){
+            throw new TokenNotFoundException("Refresh token is revoked");
+        }
+
         refreshTokenService.verifyExpiration(refreshToken);
         refreshTokenService.revokeToken(refreshToken);
+
         User user = refreshToken.getUser();
+
         RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
-        String newJwt = jwtProvider.generateToken(user);
+        String newJwt = jwtProvider.generateToken(user, newRefreshToken);
+        refreshTokenRepository.save(newRefreshToken);
 
         return new TokenDTO(newJwt, newRefreshToken.getTokenValue());
     }

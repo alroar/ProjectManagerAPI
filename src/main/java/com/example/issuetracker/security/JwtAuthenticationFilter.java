@@ -1,5 +1,6 @@
 package com.example.issuetracker.security;
 
+import com.example.issuetracker.repository.RefreshTokenRepository;
 import com.example.issuetracker.util.JwtProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,9 +21,11 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtAuthenticationFilter(JwtProvider jwtProvider){
+    public JwtAuthenticationFilter(JwtProvider jwtProvider, RefreshTokenRepository refreshTokenRepository){
         this.jwtProvider = jwtProvider;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Override
@@ -45,6 +48,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .getBody();
 
                 String username = claims.getSubject();
+                String jti = claims.getId();
+
+                boolean valid = refreshTokenRepository.existsByJwtIdAndRevokedFalse(jti);
+                if(!valid){
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Token revoked or invalid");
+                    return;
+                }
 
                 List<String> roles = claims.get("roles", List.class);
                 List<SimpleGrantedAuthority> authorities = roles.stream()
@@ -53,7 +64,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(username, null, authorities);
-
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
             } catch (Exception e) {
