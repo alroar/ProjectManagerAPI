@@ -40,6 +40,8 @@ public class Issue {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private boolean archived = false;
+    private Instant archivedAt;
 
 
     @PrePersist

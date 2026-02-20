@@ -1,9 +1,6 @@
 package com.example.issuetracker.service;
 
-import com.example.issuetracker.dto.IssueCreateDTO;
-import com.example.issuetracker.dto.IssueResponseDTO;
-import com.example.issuetracker.dto.IssueStatusUpdateDTO;
-import com.example.issuetracker.dto.IssueUpdateDTO;
+import com.example.issuetracker.dto.*;
 import com.example.issuetracker.entity.Issue;
 import com.example.issuetracker.entity.IssueStatus;
 import com.example.issuetracker.entity.Project;
@@ -19,6 +16,7 @@ import com.example.issuetracker.repository.UserRepository;
 import com.example.issuetracker.util.IssueTransitions;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,5 +111,22 @@ public class IssueService {
         issueMapper.updateStatusFromDTO(issueStatusUpdateDTO, issue);
         issueRepository.save(issue);
         return issueMapper.toDTO(issue);
+    }
+
+    public IssueResponseDTO archiveIssue(Long id, boolean archived){
+
+        Issue issue = issueRepository.findById(id)
+                .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
+
+        if(archived && issue.getIssueStatus() != IssueStatus.CLOSED){
+            throw new BussinessException("Only CLOSED issues can be archived");
+        }
+
+        issue.setArchived(archived);
+        issue.setArchivedAt(archived ? Instant.now() : null);
+        issueRepository.save(issue);
+
+        return issueMapper.toDTO(issue);
+
     }
 }
