@@ -22,4 +22,6 @@ public class IssueResponseDTO {
     private Long userId;
     private Instant createdAt;
     private Instant updatedAt;
+    private boolean archived;
+    private Instant archivedAt;
 }

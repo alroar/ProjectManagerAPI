@@ -2,7 +2,9 @@ package com.example.issuetracker.controller;
 
 import com.example.issuetracker.dto.*;
 import com.example.issuetracker.service.IssueService;
+import com.example.issuetracker.service.ProjectService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +17,17 @@ public class IssueController {
 
     private final IssueService issueService;
 
-    public IssueController(IssueService issueService){
+
+    public IssueController(IssueService issueService, ProjectService projectService){
         this.issueService = issueService;
     }
 
     // Create issue
     @PostMapping
     public ResponseEntity<IssueResponseDTO> createIssue(@RequestBody @Valid IssueCreateDTO issueCreateDTO) throws Exception {
-
         IssueResponseDTO newDto = issueService.createIssue(issueCreateDTO);
 
-        return ResponseEntity.status(201).body(newDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newDto);
     }
 
     // Get all issues
@@ -47,7 +49,6 @@ public class IssueController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<IssueResponseDTO> updateIssue(@PathVariable Long id, @RequestBody @Valid IssueUpdateDTO issueUpdateDTO) throws Exception {
-
         IssueResponseDTO issueUpdated = issueService.updateIssue(id, issueUpdateDTO);
 
         return ResponseEntity.ok(issueUpdated);

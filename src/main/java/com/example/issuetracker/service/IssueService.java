@@ -5,10 +5,7 @@ import com.example.issuetracker.entity.Issue;
 import com.example.issuetracker.entity.IssueStatus;
 import com.example.issuetracker.entity.Project;
 import com.example.issuetracker.entity.User;
-import com.example.issuetracker.exceptions.BussinessException;
-import com.example.issuetracker.exceptions.IssueNotFoundException;
-import com.example.issuetracker.exceptions.ProjectNotFoundException;
-import com.example.issuetracker.exceptions.UserNotFoundException;
+import com.example.issuetracker.exceptions.*;
 import com.example.issuetracker.mappers.IssueMapper;
 import com.example.issuetracker.repository.IssueRepository;
 import com.example.issuetracker.repository.ProjectRepository;
@@ -41,10 +38,15 @@ public class IssueService {
 
     public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO) throws Exception{
 
-        projectRepository.findById(issueCreateDTO.getProjectId())
+        Project project = projectRepository.findById(issueCreateDTO.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
+        if(project.isArchived()){
+            throw new ProjectArchivedException("Project is archived");
+        }
+
         Issue issue = issueMapper.toEntity(issueCreateDTO);
+        issue.setProject(project);
         issue.setIssueStatus(IssueStatus.OPEN);
         Issue savedIssue = issueRepository.save(issue);
         return issueMapper.toDTO(savedIssue);
@@ -70,12 +72,16 @@ public class IssueService {
     public IssueResponseDTO updateIssue(Long id, IssueUpdateDTO issueUpdateDTO) throws Exception{
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
-        Project project = projectRepository.findById(issueUpdateDTO.getProjectId())
-                        .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
+
+        if(issue.isArchived()){
+            throw new IssueArchivedException("Cannot update an archived issue");
+        }
 
         issueMapper.updateEntityFromDTO(issueUpdateDTO, issue);
 
-        return issueMapper.toDTO(issue);
+        Issue updatedIssue = issueRepository.save(issue);
+
+        return issueMapper.toDTO(updatedIssue);
     }
 
 
