@@ -4,6 +4,7 @@ import com.example.issuetracker.dto.ProjectDTO;
 import com.example.issuetracker.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class ProjectController {
         return ResponseEntity.ok(project);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) throws Exception {
         projectService.deleteById(id);

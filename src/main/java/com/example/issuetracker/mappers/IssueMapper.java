@@ -5,12 +5,13 @@ import com.example.issuetracker.entity.Issue;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface IssueMapper {
 
-    @Mapping(source = "project.id", target = "projectId")
-    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "project.id", target = "projectId", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+    @Mapping(source = "user.id", target = "userId", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     IssueResponseDTO toDTO(Issue issue);
 
     @Mapping(target = "id", ignore = true)
