@@ -51,7 +51,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .parseClaimsJws(token)
                         .getBody();
 
-<<<<<<< HEAD
                 String username = claims.getSubject();
                 String jti = claims.getId();
 
@@ -61,8 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     response.getWriter().write("Token revoked or invalid");
                     return;
                 }
-=======
->>>>>>> features/security
 
                 Date expirationDate = claims.getExpiration();
                 if (expirationDate.before(new Date())) {
@@ -71,7 +68,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                String username = claims.getSubject();
                 List<String> roles = claims.get("roles", List.class);
                 List<SimpleGrantedAuthority> authorities = roles.stream()
                         .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
@@ -80,11 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(username, null, authorities);
-<<<<<<< HEAD
-=======
 
-
->>>>>>> features/security
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
             } catch (JwtException | IllegalArgumentException e) {
