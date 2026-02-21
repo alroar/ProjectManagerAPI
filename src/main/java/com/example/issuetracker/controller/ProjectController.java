@@ -1,6 +1,8 @@
 package com.example.issuetracker.controller;
 
+import com.example.issuetracker.dto.ProjectCreateDTO;
 import com.example.issuetracker.dto.ProjectDTO;
+import com.example.issuetracker.dto.ProjectUpdateDTO;
 import com.example.issuetracker.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +28,9 @@ public class ProjectController {
         return ResponseEntity.ok(projectList);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<ProjectDTO> createProject(@RequestBody @Valid ProjectDTO projectDTO){
-        ProjectDTO createdProject = projectService.createProject(projectDTO);
+    @PostMapping
+    public ResponseEntity<ProjectDTO> createProject(@RequestBody @Valid ProjectCreateDTO projectCreateDTO){
+        ProjectDTO createdProject = projectService.createProject(projectCreateDTO);
         return ResponseEntity.status(201).body(createdProject);
     }
 
@@ -39,8 +41,8 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody ProjectDTO projectDTO) throws Exception {
-        ProjectDTO project = projectService.updateProject(id, projectDTO);
+    public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody @Valid ProjectUpdateDTO projectUpdateDTO) throws Exception {
+        ProjectDTO project = projectService.updateProject(id, projectUpdateDTO);
         return ResponseEntity.ok(project);
     }
 

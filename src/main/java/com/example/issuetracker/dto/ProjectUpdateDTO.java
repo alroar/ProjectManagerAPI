@@ -8,12 +8,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ProjectCreateDTO {
+@AllArgsConstructor
+public class ProjectUpdateDTO {
 
     @NotBlank
     private String name;
     @NotBlank
     private String description;
+
 }
