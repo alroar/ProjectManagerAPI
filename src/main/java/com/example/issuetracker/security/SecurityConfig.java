@@ -19,10 +19,15 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-    public SecurityConfig(JwtProvider jwtProvider, RefreshTokenRepository refreshTokenRepository) {
+    public SecurityConfig(JwtProvider jwtProvider, RefreshTokenRepository refreshTokenRepository,
+                          JwtAuthEntryPoint jwtAuthEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         this.jwtProvider = jwtProvider;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+        this.jwtAuthEntryPoint = jwtAuthEntryPoint;
     }
 
     @Bean
@@ -46,6 +51,9 @@ public class SecurityConfig {
                         .requestMatchers("/issues/**").authenticated()
                         .requestMatchers("/projects/**").authenticated()
                         .anyRequest().authenticated()
+                ).exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthEntryPoint) // 401
+                        .accessDeniedHandler(jwtAccessDeniedHandler)  // 403
                 );
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

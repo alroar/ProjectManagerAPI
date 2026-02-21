@@ -1,5 +1,6 @@
 package com.example.issuetracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,12 @@ public class Project {
     private Instant createdAt;
     private Instant updatedAt;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean archived = false;
+    private Instant archivedAt;
+
     @OneToMany(mappedBy = "project")
+    @JsonManagedReference
     private List<Issue> issues;
 
     @PrePersist

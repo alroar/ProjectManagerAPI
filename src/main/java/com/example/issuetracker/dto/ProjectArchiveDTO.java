@@ -7,12 +7,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ProjectDTO {
+@NoArgsConstructor
+public class ProjectArchiveDTO {
 
-    private Long id;
-    private String name;
-    private String description;
+    private boolean archived;
 
 }

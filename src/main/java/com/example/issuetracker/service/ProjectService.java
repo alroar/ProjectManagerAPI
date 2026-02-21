@@ -1,14 +1,16 @@
 package com.example.issuetracker.service;
 
 import com.example.issuetracker.dto.ProjectCreateDTO;
-import com.example.issuetracker.dto.ProjectDTO;
+import com.example.issuetracker.dto.ProjectResponseDTO;
 import com.example.issuetracker.dto.ProjectUpdateDTO;
 import com.example.issuetracker.entity.Project;
+import com.example.issuetracker.exceptions.BussinessException;
 import com.example.issuetracker.exceptions.ProjectNotFoundException;
 import com.example.issuetracker.mappers.ProjectMapper;
 import com.example.issuetracker.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,27 +26,27 @@ public class ProjectService {
         this.projectMapper = projectMapper;
     }
 
-    public ProjectDTO createProject(ProjectCreateDTO projectDTO){
+    public ProjectResponseDTO createProject(ProjectCreateDTO projectDTO){
         Project project = projectMapper.toEntity(projectDTO);
         Project savedProject = projectRepository.save(project);
         return projectMapper.toDTO(savedProject);
     }
 
-    public ProjectDTO getProjectById(Long id) throws Exception{
+    public ProjectResponseDTO getProjectById(Long id) throws Exception{
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
        return projectMapper.toDTO(project);
     }
 
-    public List<ProjectDTO> getAllProjects(){
+    public List<ProjectResponseDTO> getAllProjects(){
         List<Project> projects = projectRepository.findAll();
 
         return projects.stream().map(project -> projectMapper.toDTO(project))
                 .collect(Collectors.toList());
     }
 
-    public ProjectDTO updateProject(Long id, ProjectUpdateDTO projectUpdateDTO) throws Exception{
+    public ProjectResponseDTO updateProject(Long id, ProjectUpdateDTO projectUpdateDTO) throws Exception{
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
@@ -54,11 +56,19 @@ public class ProjectService {
         return projectMapper.toDTO(savedProject);
     }
 
-    public void deleteById(Long id) throws Exception{
-        projectRepository.findById(id)
+    public ProjectResponseDTO archiveProject(Long id, boolean archived) throws Exception{
+        Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
-        projectRepository.deleteById(id);
+        if(archived && project.isArchived()){
+            throw new BussinessException("Project is already archived");
+        }
+        project.setArchived(archived);
+        project.setArchivedAt(archived ? Instant.now() : null);
+
+        projectRepository.save(project);
+
+        return projectMapper.toDTO(project);
     }
 
 

@@ -1,7 +1,8 @@
 package com.example.issuetracker.controller;
 
+import com.example.issuetracker.dto.ProjectArchiveDTO;
 import com.example.issuetracker.dto.ProjectCreateDTO;
-import com.example.issuetracker.dto.ProjectDTO;
+import com.example.issuetracker.dto.ProjectResponseDTO;
 import com.example.issuetracker.dto.ProjectUpdateDTO;
 import com.example.issuetracker.service.ProjectService;
 import jakarta.validation.Valid;
@@ -22,36 +23,37 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjectDTO>> getProjects(){
-        List<ProjectDTO> projectList = projectService.getAllProjects();
-
+    public ResponseEntity<List<ProjectResponseDTO>> getProjects(){
+        List<ProjectResponseDTO> projectList = projectService.getAllProjects();
         return ResponseEntity.ok(projectList);
     }
 
     @PostMapping
-    public ResponseEntity<ProjectDTO> createProject(@RequestBody @Valid ProjectCreateDTO projectCreateDTO){
-        ProjectDTO createdProject = projectService.createProject(projectCreateDTO);
+    public ResponseEntity<ProjectResponseDTO> createProject(@RequestBody @Valid ProjectCreateDTO projectCreateDTO){
+        ProjectResponseDTO createdProject = projectService.createProject(projectCreateDTO);
         return ResponseEntity.status(201).body(createdProject);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable Long id) throws Exception {
-        ProjectDTO project = projectService.getProjectById(id);
+    public ResponseEntity<ProjectResponseDTO> getProjectById(@PathVariable Long id) throws Exception {
+        ProjectResponseDTO project = projectService.getProjectById(id);
         return ResponseEntity.ok(project);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody @Valid ProjectUpdateDTO projectUpdateDTO) throws Exception {
-        ProjectDTO project = projectService.updateProject(id, projectUpdateDTO);
+    public ResponseEntity<ProjectResponseDTO> updateProject(@PathVariable Long id, @RequestBody @Valid ProjectUpdateDTO projectUpdateDTO) throws Exception {
+        ProjectResponseDTO project = projectService.updateProject(id, projectUpdateDTO);
         return ResponseEntity.ok(project);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) throws Exception {
-        projectService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/{id}/archive")
+    public ResponseEntity<ProjectResponseDTO> archiveProject(@PathVariable Long id, @RequestBody @Valid ProjectArchiveDTO projectArchiveDTO) throws Exception {
+        ProjectResponseDTO archivedProject = projectService.archiveProject(id, projectArchiveDTO.isArchived());
+
+        return ResponseEntity.ok(archivedProject);
     }
+
 
 
 
