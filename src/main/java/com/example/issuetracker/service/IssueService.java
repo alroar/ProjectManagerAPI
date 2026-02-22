@@ -41,7 +41,7 @@ public class IssueService {
         this.userRepository = userRepository;
     }
 
-    public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO) throws Exception{
+    public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO){
 
         Project project = projectRepository.findById(issueCreateDTO.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
@@ -58,7 +58,7 @@ public class IssueService {
     }
 
 
-    public IssueResponseDTO getIssueById(Long id) throws Exception{
+    public IssueResponseDTO getIssueById(Long id){
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
 
@@ -74,7 +74,7 @@ public class IssueService {
                 .collect(Collectors.toList());
     }
 
-    public IssueResponseDTO updateIssue(Long id, IssueUpdateDTO issueUpdateDTO) throws Exception{
+    public IssueResponseDTO updateIssue(Long id, IssueUpdateDTO issueUpdateDTO){
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
 
@@ -89,12 +89,6 @@ public class IssueService {
         return issueMapper.toDTO(updatedIssue);
     }
 
-
-    public void deleteIssue(Long id) throws Exception{
-        issueRepository.findById(id)
-                .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
-        issueRepository.deleteById(id);
-    }
 
     public IssueResponseDTO assignUserToIssue(Long issueId, Long userId) throws Exception{
         Issue issue = issueRepository.findById(issueId)
@@ -112,7 +106,7 @@ public class IssueService {
         return issueMapper.toDTO(issue);
     }
 
-    public IssueResponseDTO changeIssueStatus(Long id, IssueStatusUpdateDTO issueStatusUpdateDTO) throws Exception{
+    public IssueResponseDTO changeIssueStatus(Long id, IssueStatusUpdateDTO issueStatusUpdateDTO){
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
 
@@ -147,11 +141,15 @@ public class IssueService {
 
     public Page<IssueResponseDTO> getFilteredIssues(IssueStatus status, Long userId, Boolean archived, Pageable pageable){
 
-        Specification<Issue> statusSpec = IssueSpecification.hasStatus(status);
-        Specification<Issue> userSpec = IssueSpecification.hasUser(userId);
-        Specification<Issue> archivedSpec = IssueSpecification.isArchived(archived);
+        Specification<Issue> statusSpec = (status != null) ? IssueSpecification.hasStatus(status) : null;
+        Specification<Issue> userSpec = (userId != null) ? IssueSpecification.hasUser(userId) : null;
+        Specification<Issue> archivedSpec = (archived != null) ? IssueSpecification.isArchived(archived) : null;
 
-        Specification<Issue> combinedSpec = Specification.where(statusSpec).and(userSpec).and(archivedSpec);
+        Specification<Issue> combinedSpec = Specification.where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
+        if(statusSpec != null) combinedSpec = combinedSpec.and(statusSpec);
+        if (userSpec != null) combinedSpec = combinedSpec.and(userSpec);
+        if (archivedSpec != null) combinedSpec = combinedSpec.and(archivedSpec);
+
         Page<Issue> page = issueRepository.findAll(combinedSpec, pageable);
         List<IssueResponseDTO> dtos = page.getContent().stream().map(issue -> issueMapper.toDTO(issue)).collect(Collectors.toList());
 
