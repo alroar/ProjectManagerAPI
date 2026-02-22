@@ -13,30 +13,43 @@ public class ProjectSpecification {
     // Archived status
     public static Specification<Project> isArchived(Boolean archived){
         if(archived == null){
-            return null;
-        }else{
-            return (root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("archived"), archived);
+            return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
         }
+
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("archived"), archived);
+
     }
 
     // Name filter
     public static Specification<Project> hasName(String name){
         if(name == null || name.isEmpty()){
-            return null;
-        }else{
-            return (root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get("name"), "%" + name + "%");
+            return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
         }
+
+        return (root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(
+                            criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
+
     }
 
-    public static Specification<Project> createdAfter(java.time.Instant createdAt){
-        if(createdAt == null){
-            return null;
-        }else{
-            return (root, query, criteriaBuilder) ->
-                    criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), createdAt);
+    public static Specification<Project> createdAfter(java.time.Instant createdAfter){
+        if(createdAfter == null){
+            return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
         }
+
+        return (root, query, criteriaBuilder) ->
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), createdAfter);
+
+    }
+
+    public static Specification<Project> createdBefore(java.time.Instant createdBefore){
+        if(createdBefore == null){
+            return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+        }
+            return (root, query, criteriaBuilder) ->
+                    criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), createdBefore);
+
     }
 
 

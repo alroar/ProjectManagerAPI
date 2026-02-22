@@ -6,7 +6,7 @@ import com.example.issuetracker.dto.ProjectResponseDTO;
 import com.example.issuetracker.dto.ProjectUpdateDTO;
 import com.example.issuetracker.entity.Project;
 import com.example.issuetracker.entity.User;
-import com.example.issuetracker.exceptions.BussinessException;
+import com.example.issuetracker.exceptions.BusinessException;
 import com.example.issuetracker.exceptions.ProjectArchivedException;
 import com.example.issuetracker.exceptions.ProjectNotFoundException;
 import com.example.issuetracker.exceptions.UserNotFoundException;
@@ -79,7 +79,7 @@ public class ProjectService {
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
         if(archived && project.isArchived()){
-            throw new BussinessException("Project is already archived");
+            throw new BusinessException("Project is already archived");
         }
         ProjectArchiveDTO archiveDTO = new ProjectArchiveDTO();
         archiveDTO.setArchived(archived);
@@ -129,18 +129,21 @@ public class ProjectService {
     }
 
     // Get Filtered Projects
-
     public Page<ProjectResponseDTO> getFilteredProjects(String name, Boolean archived,
-                                                        Instant createdAt, Pageable pageable){
+                                                        Instant createdAfter,
+                                                        Instant createdBefore
+                                                        ,Pageable pageable){
 
         Specification<Project> nameSpec = (name != null) ? ProjectSpecification.hasName(name) : null;
         Specification<Project> archivedSpec = (archived != null) ? ProjectSpecification.isArchived(archived) : null;
-        Specification<Project> createdAtSpec = (createdAt != null) ? ProjectSpecification.createdAfter(createdAt) : null;
+        Specification<Project> createdAfterSpec = (createdAfter != null) ? ProjectSpecification.createdAfter(createdAfter) : null;
+        Specification<Project> createdBeforeSpect = (createdBefore != null) ? ProjectSpecification.createdBefore(createdBefore) : null;
 
         Specification<Project> combinedSpec = Specification.where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
         if(nameSpec != null) combinedSpec = combinedSpec.and(nameSpec);
         if(archivedSpec != null) combinedSpec = combinedSpec.and(archivedSpec);
-        if(createdAtSpec != null) combinedSpec = combinedSpec.and(createdAtSpec);
+        if(createdAfterSpec != null) combinedSpec = combinedSpec.and(createdAfterSpec);
+        if(createdBeforeSpect != null) combinedSpec = combinedSpec.and(createdBeforeSpect);
 
         Page<Project> page = projectRepository.findAll(combinedSpec, pageable);
         List<ProjectResponseDTO> dtos = page.getContent().stream().map(project -> projectMapper.toDTO(project)).collect(Collectors.toList());

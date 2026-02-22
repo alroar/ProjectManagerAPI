@@ -6,7 +6,7 @@ import com.example.issuetracker.entity.Role;
 import com.example.issuetracker.entity.RoleName;
 import com.example.issuetracker.entity.User;
 import com.example.issuetracker.exceptions.UserAlreadyExistsException;
-import com.example.issuetracker.exceptions.UserRoleNotFoundException;
+import com.example.issuetracker.exceptions.AuthenticationException;
 import com.example.issuetracker.repository.RoleRepository;
 import com.example.issuetracker.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,9 +27,9 @@ public class UserService {
         this.roleRepository = roleRepository;
     }
 
-    public void registerUser(UserDTO dto) throws Exception {
+    public void registerUser(UserDTO dto) {
         if(userRepository.findByUserName(dto.getUsername()).isPresent()){
-            throw new UserAlreadyExistsException();
+            throw new UserAlreadyExistsException("User already exists");
         }
         if(userRepository.findByEmail(dto.getEmail()).isPresent()){
             throw new UserAlreadyExistsException("Email already used");
@@ -45,7 +45,7 @@ public class UserService {
         user.setSurname(dto.getSurname());
 
         Role userRole = roleRepository.findByRoleType(RoleName.USER)
-                        .orElseThrow(() -> new UserRoleNotFoundException("Default role USER not found"));
+                        .orElseThrow(() -> new AuthenticationException("Default role USER not found"));
 
         user.getRoles().add(userRole);
 

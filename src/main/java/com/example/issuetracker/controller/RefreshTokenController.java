@@ -4,7 +4,7 @@ import com.example.issuetracker.dto.RefreshRequestDTO;
 import com.example.issuetracker.dto.TokenDTO;
 import com.example.issuetracker.entity.RefreshToken;
 import com.example.issuetracker.entity.User;
-import com.example.issuetracker.exceptions.TokenNotFoundException;
+import com.example.issuetracker.exceptions.TokenErrorException;
 import com.example.issuetracker.repository.RefreshTokenRepository;
 import com.example.issuetracker.service.RefreshTokenService;
 import com.example.issuetracker.util.JwtProvider;
@@ -33,10 +33,10 @@ public class RefreshTokenController {
     public TokenDTO generateRefreshToken(@RequestBody RefreshRequestDTO request) throws Exception{
         String tokenValue = request.getRefreshToken();
         RefreshToken refreshToken = refreshTokenRepository.findByTokenValue(tokenValue)
-                .orElseThrow(() -> new TokenNotFoundException("Token couldn't be found"));
+                .orElseThrow(() -> new TokenErrorException("Token couldn't be found"));
 
         if(refreshToken.isRevoked()){
-            throw new TokenNotFoundException("Refresh token is revoked");
+            throw new TokenErrorException("Refresh token is revoked");
         }
 
         refreshTokenService.verifyExpiration(refreshToken);

@@ -11,28 +11,31 @@ public class IssueSpecification {
 
     public static Specification<Issue> hasStatus(IssueStatus status){
         if (status == null){
-            return null;
-        }else{
-            return (root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("issueStatus"), status);
+            return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
         }
+
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("issueStatus"), status);
+
     }
 
     public static Specification<Issue> hasUser(Long userId){
         if(userId == null){
-            return null;
-        }else{
-            return (root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("user").get("id"), userId);
+            return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
         }
+
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("user").get("id"), userId);
+
     }
 
     public static Specification<Issue> isArchived(Boolean archived){
         if(archived == null){
-            return null;
-        }else{
-            return (root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("archived"), archived);
+            return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
         }
+
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("archived"), archived);
+
     }
 }

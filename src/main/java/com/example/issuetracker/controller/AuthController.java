@@ -5,7 +5,7 @@ import com.example.issuetracker.dto.TokenDTO;
 import com.example.issuetracker.dto.UserDTO;
 import com.example.issuetracker.entity.RefreshToken;
 import com.example.issuetracker.entity.User;
-import com.example.issuetracker.exceptions.TokenNotFoundException;
+import com.example.issuetracker.exceptions.TokenErrorException;
 import com.example.issuetracker.service.RefreshTokenService;
 import com.example.issuetracker.service.UserService;
 import com.example.issuetracker.util.JwtProvider;
@@ -66,7 +66,7 @@ public class AuthController {
 
     // Logout ENDPOINT
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) throws TokenNotFoundException {
+    public ResponseEntity<String> logout(HttpServletRequest request) throws TokenErrorException {
 
         String header = request.getHeader("Authorization");
 

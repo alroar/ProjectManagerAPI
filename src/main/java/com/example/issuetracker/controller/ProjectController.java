@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -92,10 +93,11 @@ public class ProjectController {
     public ResponseEntity<Page<ProjectResponseDTO>> getFilteredProjects(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Boolean archived,
-            @RequestBody(required = false)Instant createdAt,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdAfter,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdBefore,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable
             ){
-        Page<ProjectResponseDTO> page = projectService.getFilteredProjects(name, archived, createdAt, pageable);
+        Page<ProjectResponseDTO> page = projectService.getFilteredProjects(name, archived, createdAfter, createdBefore, pageable);
 
         return ResponseEntity.ok(page);
     }

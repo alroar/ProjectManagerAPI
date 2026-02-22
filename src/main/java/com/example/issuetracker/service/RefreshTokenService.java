@@ -3,7 +3,7 @@ package com.example.issuetracker.service;
 
 import com.example.issuetracker.entity.RefreshToken;
 import com.example.issuetracker.entity.User;
-import com.example.issuetracker.exceptions.TokenNotFoundException;
+import com.example.issuetracker.exceptions.TokenErrorException;
 import com.example.issuetracker.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
@@ -23,11 +23,11 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
-    public RefreshToken verifyExpiration(RefreshToken refreshToken) throws TokenNotFoundException {
+    public RefreshToken verifyExpiration(RefreshToken refreshToken) throws TokenErrorException {
         if(refreshToken.getExpiryDate().isBefore(Instant.now())){
             refreshToken.setRevoked(true);
             refreshTokenRepository.save(refreshToken);
-            throw new TokenNotFoundException("Token have expired");
+            throw new TokenErrorException("Token have expired");
         }
 
         return refreshToken;
@@ -42,9 +42,9 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
-    public void revokeByJwtId(String jwtId) throws TokenNotFoundException {
+    public void revokeByJwtId(String jwtId) throws TokenErrorException {
         RefreshToken token = refreshTokenRepository.findByJwtId(jwtId)
-                .orElseThrow(() -> new TokenNotFoundException("Token not found"));
+                .orElseThrow(() -> new TokenErrorException("Token not found"));
 
         token.setRevoked(true);
         refreshTokenRepository.save(token);

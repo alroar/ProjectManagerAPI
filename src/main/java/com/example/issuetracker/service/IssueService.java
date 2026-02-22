@@ -100,7 +100,7 @@ public class IssueService {
             issue.setUser(user);
             issueRepository.save(issue);
         }else{
-            throw new BussinessException("Cannot assign user to a CLOSED issue");
+            throw new BusinessException("Cannot assign user to a CLOSED issue");
         }
 
         return issueMapper.toDTO(issue);
@@ -111,7 +111,7 @@ public class IssueService {
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
 
         if(!IssueTransitions.isValidTransition(issue.getIssueStatus(), issueStatusUpdateDTO.getIssueStatus())){
-            throw new BussinessException("Invalid transition. Cannot move from "
+            throw new BusinessException("Invalid transition. Cannot move from "
             +issue.getIssueStatus() + " to " + issueStatusUpdateDTO.getIssueStatus() + ". Allowed: " + IssueTransitions.VALID_TRANSITIONS.get(issue.getIssueStatus()));
         }
 
@@ -126,7 +126,7 @@ public class IssueService {
                 .orElseThrow(() -> new IssueNotFoundException("Issue couldn't be found"));
 
         if(archived && issue.getIssueStatus() != IssueStatus.CLOSED){
-            throw new BussinessException("Only CLOSED issues can be archived");
+            throw new BusinessException("Only CLOSED issues can be archived");
         }
 
         IssueArchiveDTO archiveDTO = new IssueArchiveDTO();

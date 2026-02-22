@@ -1,6 +1,6 @@
 package com.example.issuetracker.exceptions;
 
-public class IssueNotFoundException extends RuntimeException{
+public class IssueNotFoundException extends NotFoundBaseException{
     public IssueNotFoundException(String message){
         super(message);
     }
