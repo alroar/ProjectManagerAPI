@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -37,6 +39,15 @@ public class Project {
     @OneToMany(mappedBy = "project")
     @JsonManagedReference
     private List<Issue> issues;
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_users",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @JsonManagedReference
+    private Set<User> users = new HashSet<>();
 
     @PrePersist
     public void prePersist(){

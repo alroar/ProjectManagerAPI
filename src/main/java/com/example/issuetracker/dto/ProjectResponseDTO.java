@@ -24,5 +24,6 @@ public class ProjectResponseDTO {
     private boolean archived;
     private Instant archivedAt;
     private List<IssueResponseDTO> issues;
+    private List<Long> userIds;
 
 }

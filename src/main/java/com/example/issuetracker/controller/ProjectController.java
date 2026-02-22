@@ -4,6 +4,7 @@ import com.example.issuetracker.dto.ProjectArchiveDTO;
 import com.example.issuetracker.dto.ProjectCreateDTO;
 import com.example.issuetracker.dto.ProjectResponseDTO;
 import com.example.issuetracker.dto.ProjectUpdateDTO;
+import com.example.issuetracker.exceptions.UserNotFoundException;
 import com.example.issuetracker.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,25 @@ public class ProjectController {
         return ResponseEntity.ok(archivedProject);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{projectId}/assignUser/{userId}")
+    public ResponseEntity<ProjectResponseDTO> assignUserToProject(
+            @PathVariable @Valid Long projectId,
+            @PathVariable @Valid Long userId
+    ) throws Exception {
+        ProjectResponseDTO projectUpdated = projectService.assignUserToProject(projectId, userId);
+        return ResponseEntity.ok(projectUpdated);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{projectId}/removeUser/{userId}")
+    public ResponseEntity<ProjectResponseDTO> removeUserFromProject(
+            @PathVariable @Valid Long projectId,
+            @PathVariable @Valid Long userId
+    ) throws Exception{
+        ProjectResponseDTO projectUpdated = projectService.removeUserFromProject(projectId, userId);
+        return ResponseEntity.ok(projectUpdated);
+    }
 
 
 

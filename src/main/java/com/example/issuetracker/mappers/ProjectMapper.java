@@ -21,6 +21,7 @@ public interface ProjectMapper {
 
 
     @Mapping(target = "issues", source = "issues")
+    @Mapping(target = "userIds", expression = "java(project.getUsers() != null ? project.getUsers().stream().map(u -> u.getId()).collect(Collectors.toList()) : null)")
     ProjectResponseDTO toDTO(Project project);
 
     @Mapping(target = "id", ignore = true)
