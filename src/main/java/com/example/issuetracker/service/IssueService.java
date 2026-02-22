@@ -139,6 +139,7 @@ public class IssueService {
 
     }
 
+    // Get Filtered Issues
     public Page<IssueResponseDTO> getFilteredIssues(IssueStatus status, Long userId, Boolean archived, Pageable pageable){
 
         Specification<Issue> statusSpec = (status != null) ? IssueSpecification.hasStatus(status) : null;

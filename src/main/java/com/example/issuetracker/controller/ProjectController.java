@@ -4,13 +4,17 @@ import com.example.issuetracker.dto.ProjectArchiveDTO;
 import com.example.issuetracker.dto.ProjectCreateDTO;
 import com.example.issuetracker.dto.ProjectResponseDTO;
 import com.example.issuetracker.dto.ProjectUpdateDTO;
-import com.example.issuetracker.repository.ProjectRepository;
 import com.example.issuetracker.service.ProjectService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -82,6 +86,19 @@ public class ProjectController {
         return ResponseEntity.ok(projectUpdated);
     }
 
+
+    // Filtered
+    @GetMapping("/filtered")
+    public ResponseEntity<Page<ProjectResponseDTO>> getFilteredProjects(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Boolean archived,
+            @RequestBody(required = false)Instant createdAt,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable
+            ){
+        Page<ProjectResponseDTO> page = projectService.getFilteredProjects(name, archived, createdAt, pageable);
+
+        return ResponseEntity.ok(page);
+    }
 
 
 }

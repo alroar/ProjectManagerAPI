@@ -85,6 +85,7 @@ public class IssueController {
         return ResponseEntity.ok(updatedIssue);
     }
 
+    // Filtered
     @GetMapping("/filtered")
     public ResponseEntity<Page<IssueResponseDTO>> getFilteredIssues(
             @RequestParam(required = false) IssueStatus status,

@@ -13,6 +13,11 @@ import com.example.issuetracker.exceptions.UserNotFoundException;
 import com.example.issuetracker.mappers.ProjectMapper;
 import com.example.issuetracker.repository.ProjectRepository;
 import com.example.issuetracker.repository.UserRepository;
+import com.example.issuetracker.specification.ProjectSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -41,7 +46,7 @@ public class ProjectService {
         return projectMapper.toDTO(savedProject);
     }
 
-    // Get Project By Id
+    // Get Project By id
     public ProjectResponseDTO getProjectById(Long id){
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
@@ -121,6 +126,26 @@ public class ProjectService {
         Project updatedProject = projectRepository.save(project);
 
         return projectMapper.toDTO(updatedProject);
+    }
+
+    // Get Filtered Projects
+
+    public Page<ProjectResponseDTO> getFilteredProjects(String name, Boolean archived,
+                                                        Instant createdAt, Pageable pageable){
+
+        Specification<Project> nameSpec = (name != null) ? ProjectSpecification.hasName(name) : null;
+        Specification<Project> archivedSpec = (archived != null) ? ProjectSpecification.isArchived(archived) : null;
+        Specification<Project> createdAtSpec = (createdAt != null) ? ProjectSpecification.createdAfter(createdAt) : null;
+
+        Specification<Project> combinedSpec = Specification.where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
+        if(nameSpec != null) combinedSpec = combinedSpec.and(nameSpec);
+        if(archivedSpec != null) combinedSpec = combinedSpec.and(archivedSpec);
+        if(createdAtSpec != null) combinedSpec = combinedSpec.and(createdAtSpec);
+
+        Page<Project> page = projectRepository.findAll(combinedSpec, pageable);
+        List<ProjectResponseDTO> dtos = page.getContent().stream().map(project -> projectMapper.toDTO(project)).collect(Collectors.toList());
+
+        return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
 
 
