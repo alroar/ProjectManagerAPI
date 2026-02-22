@@ -1,9 +1,13 @@
 package com.example.issuetracker.controller;
 
 import com.example.issuetracker.dto.*;
+import com.example.issuetracker.entity.IssueStatus;
 import com.example.issuetracker.service.IssueService;
-import com.example.issuetracker.service.ProjectService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +22,7 @@ public class IssueController {
     private final IssueService issueService;
 
 
-    public IssueController(IssueService issueService, ProjectService projectService){
+    public IssueController(IssueService issueService){
         this.issueService = issueService;
     }
 
@@ -79,6 +83,17 @@ public class IssueController {
         IssueResponseDTO updatedIssue = issueService.archiveIssue(id, issueArchiveDTO.isArchived());
 
         return ResponseEntity.ok(updatedIssue);
+    }
+
+    @GetMapping("/filtered")
+    public ResponseEntity<Page<IssueResponseDTO>> getFilteredIssues(
+            @RequestParam(required = false) IssueStatus status,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Boolean archived,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable){
+        Page<IssueResponseDTO> page = issueService.getFilteredIssues(status, userId, archived, pageable);
+
+        return ResponseEntity.ok(page);
     }
 
 

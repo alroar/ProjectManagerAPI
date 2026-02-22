@@ -11,7 +11,12 @@ import com.example.issuetracker.repository.IssueRepository;
 import com.example.issuetracker.repository.ProjectRepository;
 import com.example.issuetracker.repository.UserRepository;
 
+import com.example.issuetracker.specification.IssueSpecification;
 import com.example.issuetracker.util.IssueTransitions;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -136,5 +141,18 @@ public class IssueService {
 
         return issueMapper.toDTO(issue);
 
+    }
+
+    public Page<IssueResponseDTO> getFilteredIssues(IssueStatus status, Long userId, Boolean archived, Pageable pageable){
+
+        Specification<Issue> statusSpec = IssueSpecification.hasStatus(status);
+        Specification<Issue> userSpec = IssueSpecification.hasUser(userId);
+        Specification<Issue> archivedSpec = IssueSpecification.isArchived(archived);
+
+        Specification<Issue> combinedSpec = Specification.where(statusSpec).and(userSpec).and(archivedSpec);
+        Page<Issue> page = issueRepository.findAll(combinedSpec, pageable);
+        List<IssueResponseDTO> dtos = page.getContent().stream().map(issue -> issueMapper.toDTO(issue)).collect(Collectors.toList());
+
+        return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
 }
