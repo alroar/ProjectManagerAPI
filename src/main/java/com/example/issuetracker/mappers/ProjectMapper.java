@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+
 @Mapper(componentModel = "spring", uses = {IssueMapper.class})
 public interface ProjectMapper {
 
@@ -17,11 +18,12 @@ public interface ProjectMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "issues", ignore = true)
     @Mapping(target = "archived", ignore = true)
+    @Mapping(target = "archivedAt", ignore = true)
     Project toEntity(ProjectCreateDTO projectCreateDTO);
 
 
     @Mapping(target = "issues", source = "issues")
-    @Mapping(target = "userIds", expression = "java(project.getUsers() != null ? project.getUsers().stream().map(u -> u.getId()).collect(Collectors.toList()) : null)")
+    @Mapping(target = "userIds", expression = "java(project.getUsers() != null ? project.getUsers().stream().map(u -> u.getId()).collect(java.util.stream.Collectors.toList()) : null)")
     ProjectResponseDTO toDTO(Project project);
 
     @Mapping(target = "id", ignore = true)
@@ -29,6 +31,7 @@ public interface ProjectMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "issues", ignore = true)
     @Mapping(target = "archived", ignore = true)
+    @Mapping(target = "archivedAt", ignore = true)
     void updateProjectFromDTO(ProjectUpdateDTO projectUpdateDTO, @MappingTarget Project project);
 
     @Mapping(target = "name", ignore = true)

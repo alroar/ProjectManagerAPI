@@ -4,7 +4,7 @@ import com.example.issuetracker.dto.ProjectArchiveDTO;
 import com.example.issuetracker.dto.ProjectCreateDTO;
 import com.example.issuetracker.dto.ProjectResponseDTO;
 import com.example.issuetracker.dto.ProjectUpdateDTO;
-import com.example.issuetracker.exceptions.UserNotFoundException;
+import com.example.issuetracker.repository.ProjectRepository;
 import com.example.issuetracker.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,38 +23,44 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
+    // Get All Projects
     @GetMapping
     public ResponseEntity<List<ProjectResponseDTO>> getProjects(){
         List<ProjectResponseDTO> projectList = projectService.getAllProjects();
         return ResponseEntity.ok(projectList);
     }
 
+    // Create new Project
     @PostMapping
     public ResponseEntity<ProjectResponseDTO> createProject(@RequestBody @Valid ProjectCreateDTO projectCreateDTO){
         ProjectResponseDTO createdProject = projectService.createProject(projectCreateDTO);
         return ResponseEntity.status(201).body(createdProject);
     }
 
+    // Get Project by Id
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectResponseDTO> getProjectById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<ProjectResponseDTO> getProjectById(@PathVariable Long id) {
         ProjectResponseDTO project = projectService.getProjectById(id);
         return ResponseEntity.ok(project);
     }
 
+    // Update Project
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectResponseDTO> updateProject(@PathVariable Long id, @RequestBody @Valid ProjectUpdateDTO projectUpdateDTO) throws Exception {
+    public ResponseEntity<ProjectResponseDTO> updateProject(@PathVariable Long id, @RequestBody @Valid ProjectUpdateDTO projectUpdateDTO) {
         ProjectResponseDTO project = projectService.updateProject(id, projectUpdateDTO);
         return ResponseEntity.ok(project);
     }
 
+    // Archive Project
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/archive")
-    public ResponseEntity<ProjectResponseDTO> archiveProject(@PathVariable Long id, @RequestBody @Valid ProjectArchiveDTO projectArchiveDTO) throws Exception {
+    public ResponseEntity<ProjectResponseDTO> archiveProject(@PathVariable Long id, @RequestBody @Valid ProjectArchiveDTO projectArchiveDTO) {
         ProjectResponseDTO archivedProject = projectService.archiveProject(id, projectArchiveDTO.isArchived());
 
         return ResponseEntity.ok(archivedProject);
     }
 
+    // Assign User to Project
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{projectId}/assignUser/{userId}")
     public ResponseEntity<ProjectResponseDTO> assignUserToProject(
@@ -65,6 +71,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectUpdated);
     }
 
+    // Remove User From Project
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{projectId}/removeUser/{userId}")
     public ResponseEntity<ProjectResponseDTO> removeUserFromProject(

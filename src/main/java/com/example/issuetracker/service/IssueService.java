@@ -135,8 +135,10 @@ public class IssueService {
             throw new BussinessException("Only CLOSED issues can be archived");
         }
 
-        issue.setArchived(archived);
-        issue.setArchivedAt(archived ? Instant.now() : null);
+        IssueArchiveDTO archiveDTO = new IssueArchiveDTO();
+        archiveDTO.setArchived(archived);
+        archiveDTO.setArchivedAt(archived ? Instant.now() : null);
+        issueMapper.updateArchiveFromDTO(archiveDTO, issue);
         issueRepository.save(issue);
 
         return issueMapper.toDTO(issue);

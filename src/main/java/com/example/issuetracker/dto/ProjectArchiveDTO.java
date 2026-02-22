@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,5 +14,6 @@ import lombok.Setter;
 public class ProjectArchiveDTO {
 
     private boolean archived;
+    private Instant archivedAt;
 
 }

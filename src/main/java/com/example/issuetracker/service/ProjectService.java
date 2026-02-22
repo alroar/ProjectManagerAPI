@@ -1,5 +1,6 @@
 package com.example.issuetracker.service;
 
+import com.example.issuetracker.dto.ProjectArchiveDTO;
 import com.example.issuetracker.dto.ProjectCreateDTO;
 import com.example.issuetracker.dto.ProjectResponseDTO;
 import com.example.issuetracker.dto.ProjectUpdateDTO;
@@ -33,19 +34,22 @@ public class ProjectService {
         this.userRepository = userRepository;
     }
 
+    // Create new Project
     public ProjectResponseDTO createProject(ProjectCreateDTO projectDTO){
         Project project = projectMapper.toEntity(projectDTO);
         Project savedProject = projectRepository.save(project);
         return projectMapper.toDTO(savedProject);
     }
 
-    public ProjectResponseDTO getProjectById(Long id) throws Exception{
+    // Get Project By Id
+    public ProjectResponseDTO getProjectById(Long id){
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
        return projectMapper.toDTO(project);
     }
 
+    // Get All Projects
     public List<ProjectResponseDTO> getAllProjects(){
         List<Project> projects = projectRepository.findAll();
 
@@ -53,7 +57,8 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    public ProjectResponseDTO updateProject(Long id, ProjectUpdateDTO projectUpdateDTO) throws Exception{
+    // Update a Project
+    public ProjectResponseDTO updateProject(Long id, ProjectUpdateDTO projectUpdateDTO){
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
@@ -63,21 +68,25 @@ public class ProjectService {
         return projectMapper.toDTO(savedProject);
     }
 
-    public ProjectResponseDTO archiveProject(Long id, boolean archived) throws Exception{
+    // Archive a Project
+    public ProjectResponseDTO archiveProject(Long id, boolean archived){
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
         if(archived && project.isArchived()){
             throw new BussinessException("Project is already archived");
         }
-        project.setArchived(archived);
-        project.setArchivedAt(archived ? Instant.now() : null);
+        ProjectArchiveDTO archiveDTO = new ProjectArchiveDTO();
+        archiveDTO.setArchived(archived);
+        archiveDTO.setArchivedAt(archived ? Instant.now() : null);
+        projectMapper.updateArchiveFromDTO(archiveDTO, project);
 
         projectRepository.save(project);
 
         return projectMapper.toDTO(project);
     }
 
+    // Assign User To Project
     public ProjectResponseDTO assignUserToProject(Long projectId, Long userId) throws UserNotFoundException {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
@@ -96,6 +105,7 @@ public class ProjectService {
 
     }
 
+    // Remove User From Project
     public ProjectResponseDTO removeUserFromProject(Long projectId, Long userId) throws Exception{
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
