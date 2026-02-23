@@ -19,6 +19,7 @@ public interface ProjectMapper {
     @Mapping(target = "issues", ignore = true)
     @Mapping(target = "archived", ignore = true)
     @Mapping(target = "archivedAt", ignore = true)
+    @Mapping(target = "users", ignore = true)
     Project toEntity(ProjectCreateDTO projectCreateDTO);
 
 
@@ -32,6 +33,7 @@ public interface ProjectMapper {
     @Mapping(target = "issues", ignore = true)
     @Mapping(target = "archived", ignore = true)
     @Mapping(target = "archivedAt", ignore = true)
+    @Mapping(target = "users", ignore = true)
     void updateProjectFromDTO(ProjectUpdateDTO projectUpdateDTO, @MappingTarget Project project);
 
     @Mapping(target = "name", ignore = true)
@@ -39,6 +41,8 @@ public interface ProjectMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "issues", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "users", ignore = true)
     void updateArchiveFromDTO(ProjectArchiveDTO archiveDTO, @MappingTarget Project project);
 
 

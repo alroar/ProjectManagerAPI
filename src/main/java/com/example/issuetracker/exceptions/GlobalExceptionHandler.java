@@ -74,5 +74,14 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(new Exception(errors), HttpStatus.BAD_REQUEST, request);
     }
 
+    // Access Denied -> Forbidden 403
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAccessDeniedException(
+            AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(ex, HttpStatus.FORBIDDEN, request);
+    }
+
 
 }

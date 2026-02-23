@@ -2,6 +2,7 @@ package com.example.issuetracker.controller;
 
 import com.example.issuetracker.dto.*;
 import com.example.issuetracker.entity.IssueStatus;
+import com.example.issuetracker.entity.User;
 import com.example.issuetracker.service.IssueService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +30,8 @@ public class IssueController {
 
     // Create issue
     @PostMapping
-    public ResponseEntity<IssueResponseDTO> createIssue(@RequestBody @Valid IssueCreateDTO issueCreateDTO) throws Exception {
-        IssueResponseDTO newDto = issueService.createIssue(issueCreateDTO);
+    public ResponseEntity<IssueResponseDTO> createIssue(@RequestBody @Valid IssueCreateDTO issueCreateDTO, @AuthenticationPrincipal User user) throws Exception {
+        IssueResponseDTO newDto = issueService.createIssue(issueCreateDTO, user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newDto);
     }

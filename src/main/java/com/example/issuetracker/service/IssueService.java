@@ -41,13 +41,17 @@ public class IssueService {
         this.userRepository = userRepository;
     }
 
-    public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO){
+    public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO, User user){
 
         Project project = projectRepository.findById(issueCreateDTO.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
 
         if(project.isArchived()){
             throw new ProjectArchivedException("Project is archived");
+        }
+
+        if(!project.getUsers().contains(user)){
+            throw new AccessDeniedException("User is not working on this project");
         }
 
         Issue issue = issueMapper.toEntity(issueCreateDTO);

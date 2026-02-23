@@ -31,6 +31,7 @@ public interface IssueMapper {
     @Mapping(target = "archived", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "project", ignore = true)
     void updateEntityFromDTO(IssueUpdateDTO updateDTO, @MappingTarget Issue issue);
 
     @Mapping(target = "title", ignore = true)
@@ -53,6 +54,7 @@ public interface IssueMapper {
     @Mapping(target = "archived", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "issueStatus", ignore = true)
     void updateArchiveFromDTO(IssueArchiveDTO archiveDTO, @MappingTarget Issue issue);
 
 }
