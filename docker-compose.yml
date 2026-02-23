@@ -7,19 +7,33 @@ services:
       - .env
     ports:
       - "${SERVER_PORT}:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
     restart: always
     depends_on:
       - db
+    deploy:
+      resources:
+        limits:
+          memory: 1500m
+        reservations:
+          memory: 512m
 
   db:
     image: postgres:15-alpine
     env_file:
       - .env
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - issuetracker_db_data:/var/lib/postgresql/data
     ports:
       - "${DB_PORT}:5432"
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1500m
+        reservations:
+          memory: 512m
 
 volumes:
-  db_data:
+  issuetracker_db_data:
