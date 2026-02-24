@@ -42,7 +42,7 @@ public class IssueService {
         this.userRepository = userRepository;
     }
 
-    public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO, @AuthenticationPrincipal User user){
+    public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO, @AuthenticationPrincipal String username){
 
         Project project = projectRepository.findById(issueCreateDTO.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
@@ -51,8 +51,10 @@ public class IssueService {
             throw new ProjectArchivedException("Project is archived");
         }
 
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if(project.getUsers().stream().noneMatch((u -> u.getId().equals(user.getId())))){
+        if(project.getUsers().stream().noneMatch((u -> u.getUserName().equals(username)))){
             throw new AccessDeniedException("User is not working on this project");
         }
 

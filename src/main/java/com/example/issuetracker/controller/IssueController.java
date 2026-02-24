@@ -30,8 +30,8 @@ public class IssueController {
 
     // Create issue
     @PostMapping
-    public ResponseEntity<IssueResponseDTO> createIssue(@RequestBody @Valid IssueCreateDTO issueCreateDTO, @AuthenticationPrincipal User user) throws Exception {
-        IssueResponseDTO newDto = issueService.createIssue(issueCreateDTO, user);
+    public ResponseEntity<IssueResponseDTO> createIssue(@RequestBody @Valid IssueCreateDTO issueCreateDTO, @AuthenticationPrincipal String username) throws Exception {
+        IssueResponseDTO newDto = issueService.createIssue(issueCreateDTO, username);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newDto);
     }

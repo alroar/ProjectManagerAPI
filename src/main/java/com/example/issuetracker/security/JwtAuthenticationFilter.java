@@ -1,6 +1,8 @@
 package com.example.issuetracker.security;
 
+import com.example.issuetracker.entity.User;
 import com.example.issuetracker.repository.RefreshTokenRepository;
+import com.example.issuetracker.repository.UserRepository;
 import com.example.issuetracker.util.JwtProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

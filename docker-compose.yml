@@ -12,13 +12,16 @@ services:
     restart: always
     depends_on:
       - db
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       resources:
         limits:
           memory: 1500m
         reservations:
           memory: 512m
-
+    networks:
+      - issue_app-network
   db:
     image: postgres:15
     env_file:
@@ -34,6 +37,10 @@ services:
           memory: 1500m
         reservations:
           memory: 512m
-
+    networks:
+      - issue_app-network
+networks:
+  issue_app-network:
+    driver: bridge
 volumes:
   issuetracker_db_data:

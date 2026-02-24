@@ -12,10 +12,13 @@ import com.example.issuetracker.exceptions.ProjectNotFoundException;
 import com.example.issuetracker.mappers.IssueMapper;
 import com.example.issuetracker.repository.IssueRepository;
 import com.example.issuetracker.repository.ProjectRepository;
+import com.example.issuetracker.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -47,6 +50,9 @@ public class IssueServiceTest {
     @InjectMocks
     IssueService issueService;
 
+    @Mock
+    UserRepository userRepository;
+
     // Create Issue Successfully
     @Test
     void shouldCreateIssueSuccessfullyWhenProjectExistsAndIsNotArchived(){
@@ -55,10 +61,12 @@ public class IssueServiceTest {
         User user1 = new User();
         user1.setId(1L);
         user1.setName("Alice");
+        user1.setUserName("Alice");
 
         User user2 = new User();
         user2.setId(2L);
         user2.setName("Bob");
+        user2.setUserName("Bob");
 
         //Create Project
         Project project = new Project();
@@ -100,8 +108,9 @@ public class IssueServiceTest {
         when(issueMapper.toEntity(issueCreateDTO)).thenReturn(initialIssue);
         when(issueRepository.save(initialIssue)).thenReturn(savedIssue);
         when(issueMapper.toDTO(savedIssue)).thenReturn(issueResponseDTO);
+        when(userRepository.findByUserName("Alice")).thenReturn(Optional.of(user1));
 
-        IssueResponseDTO result = issueService.createIssue(issueCreateDTO, user1);
+        IssueResponseDTO result = issueService.createIssue(issueCreateDTO, user1.getUserName());
 
         // Validations
         assertNotNull(result, "Result should not be null");
@@ -119,6 +128,7 @@ public class IssueServiceTest {
         User user1 = new User();
         user1.setId(1L);
         user1.setName("Alice");
+        user1.setUserName("Alice");
 
         // Create Issue
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
@@ -130,7 +140,7 @@ public class IssueServiceTest {
         when(projectRepository.findById(99L)).thenReturn(Optional.empty());
 
         ProjectNotFoundException exception = assertThrows(ProjectNotFoundException.class, () -> {
-            issueService.createIssue(issueCreateDTO, user1);});
+            issueService.createIssue(issueCreateDTO, user1.getUserName());});
 
         //  Validation
         assertEquals("Project couldn't be found", exception.getMessage());
@@ -145,10 +155,12 @@ public class IssueServiceTest {
         User user1 = new User();
         user1.setId(1L);
         user1.setName("Alice");
+        user1.setUserName("Alice");
 
         User user2 = new User();
         user2.setId(2L);
         user2.setName("Bob");
+        user2.setUserName("Bob");
 
         // Archived project
         Project archivedProject = new Project();
@@ -168,7 +180,7 @@ public class IssueServiceTest {
         //Mock return archived project
         when(projectRepository.findById(1L)).thenReturn(Optional.of(archivedProject));
         ProjectArchivedException exception = assertThrows(ProjectArchivedException.class,
-                () -> issueService.createIssue(issueCreateDTO, user1));
+                () -> issueService.createIssue(issueCreateDTO, user1.getUserName()));
 
         assertEquals("Project is archived", exception.getMessage());
     }
@@ -180,6 +192,7 @@ public class IssueServiceTest {
         User user1 = new User();
         user1.setId(1L);
         user1.setName("Alice");
+        user1.setUserName("Alice");
 
         // Create project
         Project project = new Project();
@@ -243,10 +256,12 @@ public class IssueServiceTest {
         User user1 = new User();
         user1.setId(1L);
         user1.setName("Alice");
+        user1.setUserName("Alice");
 
         User user2 = new User();
         user2.setId(2L);
         user2.setName("Bob");
+        user2.setUserName("Bob");
 
         // Create project
         Project project = new Project();
@@ -308,10 +323,12 @@ public class IssueServiceTest {
         User user1 = new User();
         user1.setId(1L);
         user1.setName("Alice");
+        user1.setUserName("Alice");
 
         User user2 = new User();
         user2.setId(2L);
         user2.setName("Bob");
+        user2.setUserName("Bob");
 
         Project project = new Project();
         project.setId(1L);
@@ -401,11 +418,13 @@ public class IssueServiceTest {
         User member = new User();
         member.setId(1L);
         member.setName("Alice");
+        member.setUserName("Alice");
 
         // External user
         User outsider = new User();
         outsider.setId(99L);
         outsider.setName("Eve");
+        outsider.setUserName("Eve");
 
         // Project for Alice
         Project project = new Project();
@@ -422,11 +441,12 @@ public class IssueServiceTest {
 
         // Mock
         when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(userRepository.findByUserName("Eve")).thenReturn(Optional.of(outsider));
 
         // Act
         AccessDeniedException exception = assertThrows(
                 AccessDeniedException.class,
-                () -> issueService.createIssue(dto, outsider)
+                () -> issueService.createIssue(dto, "Eve")
         );
 
         // Assert
@@ -440,6 +460,7 @@ public class IssueServiceTest {
         User member = new User();
         member.setId(1L);
         member.setName("Alice");
+        member.setUserName("Alice");
 
         // Proyecto con Alice
         Project project = new Project();
@@ -476,9 +497,10 @@ public class IssueServiceTest {
         when(issueMapper.toEntity(dto)).thenReturn(issue);
         when(issueRepository.save(issue)).thenReturn(savedIssue);
         when(issueMapper.toDTO(savedIssue)).thenReturn(response);
+        when(userRepository.findByUserName("Alice")).thenReturn(Optional.of(member));
 
         // Act
-        IssueResponseDTO result = issueService.createIssue(dto, member);
+        IssueResponseDTO result = issueService.createIssue(dto, member.getUserName());
 
         // Assert
         assertNotNull(result);
