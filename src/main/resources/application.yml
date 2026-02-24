@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: portfolio
+    active: dev
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPTIME}
