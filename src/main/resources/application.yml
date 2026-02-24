@@ -1,6 +1,9 @@
 spring:
   profiles:
-    active: dev
+    active: portfolio
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPTIME}
+springdoc:
+  swagger-ui:
+    path: /docs

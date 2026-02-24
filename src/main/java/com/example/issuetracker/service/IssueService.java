@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -41,7 +42,7 @@ public class IssueService {
         this.userRepository = userRepository;
     }
 
-    public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO, User user){
+    public IssueResponseDTO createIssue(IssueCreateDTO issueCreateDTO, @AuthenticationPrincipal User user){
 
         Project project = projectRepository.findById(issueCreateDTO.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project couldn't be found"));
@@ -50,7 +51,8 @@ public class IssueService {
             throw new ProjectArchivedException("Project is archived");
         }
 
-        if(!project.getUsers().contains(user)){
+
+        if(project.getUsers().stream().noneMatch((u -> u.getId().equals(user.getId())))){
             throw new AccessDeniedException("User is not working on this project");
         }
 

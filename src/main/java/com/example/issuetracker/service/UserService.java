@@ -3,15 +3,15 @@ package com.example.issuetracker.service;
 import com.example.issuetracker.dto.LoginDTO;
 import com.example.issuetracker.dto.UserDTO;
 import com.example.issuetracker.entity.Role;
-import com.example.issuetracker.entity.RoleName;
 import com.example.issuetracker.entity.User;
+import com.example.issuetracker.exceptions.RoleNotFoundException;
 import com.example.issuetracker.exceptions.UserAlreadyExistsException;
-import com.example.issuetracker.exceptions.AuthenticationException;
 import com.example.issuetracker.repository.RoleRepository;
 import com.example.issuetracker.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class UserService {
@@ -44,10 +44,10 @@ public class UserService {
         user.setName(dto.getName());
         user.setSurname(dto.getSurname());
 
-        Role userRole = roleRepository.findByRoleType(RoleName.USER)
-                        .orElseThrow(() -> new AuthenticationException("Default role USER not found"));
+        Role role = roleRepository.findByRoleType(dto.getRole())
+                        .orElseThrow(() -> new RoleNotFoundException("Role not found"));
 
-        user.getRoles().add(userRole);
+        user.getRoles().add(role);
 
         userRepository.save(user);
     }

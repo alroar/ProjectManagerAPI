@@ -1,12 +1,14 @@
 package com.example.issuetracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
+import java.util.Set;
+
 @NoArgsConstructor
 @Entity
 @Getter
@@ -21,4 +23,13 @@ public class Role {
     @Column(unique = true)
     @Enumerated(EnumType.STRING)
     private RoleName roleType;
+
+    @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
+    private Set<User> users;
+
+    public Role(Long id, RoleName roleType){
+        this.id = id;
+        this.roleType = roleType;
+    }
 }

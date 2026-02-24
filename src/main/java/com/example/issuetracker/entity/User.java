@@ -1,5 +1,6 @@
 package com.example.issuetracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -41,10 +42,11 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-
+    @JsonIgnore
     Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Issue> assignedIssues;
 
     @Override

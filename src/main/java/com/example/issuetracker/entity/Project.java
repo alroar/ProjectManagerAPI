@@ -1,5 +1,6 @@
 package com.example.issuetracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -46,7 +47,7 @@ public class Project {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @JsonManagedReference
+    @JsonIgnore
     private Set<User> users = new HashSet<>();
 
     @PrePersist

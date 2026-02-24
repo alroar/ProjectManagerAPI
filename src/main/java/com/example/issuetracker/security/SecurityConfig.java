@@ -46,12 +46,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/issues/**").authenticated()
-                        .requestMatchers("/projects/**").authenticated()
-                        .anyRequest().authenticated()
-                ).exceptionHandling(exception -> exception
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/auth/**").permitAll();
+                    auth.requestMatchers("/issues/**").authenticated();
+                    auth.requestMatchers("/projects/**").authenticated();
+                    auth.requestMatchers("/docs/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll();
+                    auth.anyRequest().authenticated();
+                })
+                .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthEntryPoint) // 401
                         .accessDeniedHandler(jwtAccessDeniedHandler)  // 403
                 );

@@ -20,7 +20,7 @@ services:
           memory: 512m
 
   db:
-    image: postgres:15-alpine
+    image: postgres:15
     env_file:
       - .env
     volumes:
