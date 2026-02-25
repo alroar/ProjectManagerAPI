@@ -29,4 +29,4 @@ Java 17 | Spring Boot 4 | Spring Boot Security | Spring Data JPA | PostgreSQL | 
 
 ## Nota
 This README is the summary version
-For the full technical documentation, see the [Technical documentation](docs/README_technical.md)
+For the full technical documentation, see the [Technical documentation](README_technical.md)
