@@ -58,7 +58,7 @@ Se implementan DTOs para separar el modelo de persistencia del modelo expuesto e
 * Evitar exponer entidades directamente
 * Controlar los datos enviados/recibidos
 * Mejorar la seguridad
-El mape se realiza mediante MapStruct
+El mapeo se realiza mediante MapStruct
 
 ### Manejo Global de Excepciones
 La API implementa un sistema centarlizado de manejo de errores mediante @ControllerAdvice, garantizando respuestas consistentes, cuyos objetivos son:
