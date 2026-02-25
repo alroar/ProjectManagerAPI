@@ -1,3 +1,4 @@
+To see the English version, click here: [English README](docs/README_english.md)  
 # Gestión de proyectos e Incidencias
 APIRest construida con Spring Boot y PostgreSQL, con autenticación basada en JWT, refresh tokens y roles de usuario, incluyendo filtros, paginación y pruebas unitarias
 
