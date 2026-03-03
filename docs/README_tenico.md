@@ -42,13 +42,13 @@ APIRest construida con Spring Boot y PostgreSQL, con autenticación basada en JW
 ### Control de transiciones de Estado en incidencias
 Las incidencias implementan una máquina de estados simple para definir transiciones válidas entre estados, permitiendo:
 * Evitar cambios inconsistentes
-* Centalizar reglas de negoio
+* Centalizar reglas de negocio
 * Mejorar la mantenibilidad
 * Facilitar la testabilidad
 
 ### Testing
 * Test unitarios del servicio Issue
-* Test de cración valida
+* Test de creación valida
 * Test de filtros
 * Test básico de seguridad
 
