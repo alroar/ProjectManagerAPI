@@ -15,16 +15,16 @@ APIRest construida con Spring Boot y PostgreSQL, con autenticación basada en JW
 * Asignación de incidencias y control de estados
 * Filtros por estado, usuario y fechas
 * Paginación y validaciones automáticas
-* Manejo global de erroes con loggin
+* Manejo global de errores con logging
 
 ## Tecnologías
 Java 17 | Spring Boot 4 | Spring Boot Security | Spring Data JPA | PostgreSQL | JWT | Docker | Junit | Mockito | MapStruct | Lombok | Swagger  
 
 ## Ejecución rápida
-  Local
+  local
   > ./mvnw spring-boot:run
 
-  Docker 
+  docker 
   > docker-compose up --build
 
 
