@@ -125,7 +125,31 @@ cd issue-tracker-api
     docker-compose up --build
 5. Verificar la conexión
    La APi estará disponible en
-   > http://localhost:8080  
+   > http://localhost:8080
 
 ###
 Documentación API: http://localhost:8080/docs
+
+### Arquitectura
+
+```mermaid
+flowchart LR
+
+Client["Cliente / Frontend"] --> Controller["Controller"]
+Controller --> Service["Service"]
+Service --> Repository["Repository"]
+Repository --> Database[("PostgreSQL")]
+
+Controller --> DTO["DTO"]
+Service --> Mapper["MapStruct"]
+
+Security["Security Filter Chain + JWT Filter"] --> Controller
+Service --> ExceptionHandler["Global Exception Handler (ControllerAdvice)"]  
+```
+### Flujo de autenticación
+
+1. El usuario realiza login.
+2. Se genera un JWT Access Token.
+3. El Refresh Token se persiste en base de datos.
+4. El filtro JWT valida cada petición protegida.
+5. El control de roles se aplica mediante Spring Security.
