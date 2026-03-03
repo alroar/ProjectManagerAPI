@@ -14,7 +14,7 @@ APIRest construida con Spring Boot y PostgreSQL, con autenticación basada en JW
 ### Seguridad implementada
 * Encriptación de contraseñas con BCrypt
 * Autenticación stateless con JWT
-* Implementación de Refresh Token persisitido en base de datos
+* Implementación de Refresh Token persistido en base de datos
 * Filtro JWT personalizado
 * Control de acceso basado en roles
 * Configuración de SecurityFilterChain
@@ -32,7 +32,7 @@ APIRest construida con Spring Boot y PostgreSQL, con autenticación basada en JW
 
 ### Gestión de incidencias
 * CRUD completo
-* Asignación de indicencia a usuario
+* Asignación de incidencia a usuario
 * Filtros por:
   * Estado
   * Usuario
@@ -42,7 +42,7 @@ APIRest construida con Spring Boot y PostgreSQL, con autenticación basada en JW
 ### Control de transiciones de Estado en incidencias
 Las incidencias implementan una máquina de estados simple para definir transiciones válidas entre estados, permitiendo:
 * Evitar cambios inconsistentes
-* Centalizar reglas de negocio
+* Centralizar reglas de negocio
 * Mejorar la mantenibilidad
 * Facilitar la testabilidad
 
@@ -65,7 +65,7 @@ La API implementa un sistema centarlizado de manejo de errores mediante @Control
 * Evitar lógica repetida entre los controladores
 * Diferenciar errores técnicos de errores de negocio.
 * Devolver respuestas HTTP coherentes
-* Facilitar el debuggin mediante loggin estructurado
+* Facilitar el debugging mediante loggin estructurado
 
 Se ha implementado una jerarquía para clasificar los errores:
 * BaseException -> Errores de negocio (400 Bad Request)
@@ -82,7 +82,7 @@ Todas las excepciones devuelven un objeto estructurado:
   "path":   
 }
 
-### Loggin
+### Logging
 Los errores no controlados son registrados mediante SLF4J, incluyendo
 * URI de la petición
 * Mensaje de error
@@ -97,7 +97,7 @@ cd issue-tracker-api
 2. Configurar variables de entorno
    cp .env.example .env
 
-    Credenciales para el desarrollo / produccion  
+    Credenciales para el desarrollo / producción  
     DB_URL=  
     DB_USERNAME=  
     DB_PASSWORD=  
@@ -124,7 +124,7 @@ cd issue-tracker-api
   Con Docker
     docker-compose up --build
 5. Verificar la conexión
-   La APi estará disponible en
+   La API estará disponible en
    > http://localhost:8080
 
 ###
@@ -144,7 +144,7 @@ Controller --> DTO["DTO"]
 Service --> Mapper["MapStruct"]
 
 Security["Security Filter Chain + JWT Filter"] --> Controller
-Service --> ExceptionHandler["Global Exception Handler (ControllerAdvice)"]  
+Service --> ExceptionHandler["Global Exception Handler (ControllerAdvice)"]
 ```
 ### Flujo de autenticación
 
