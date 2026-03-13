@@ -118,14 +118,17 @@ cd issue-tracker-api
     POSTGRES_PASSWORD=  
 
 3. Install dependencies  
-./mvnw clean install  
+./mvnw clean install
 
-4. Run the application  
+4. Modify src/main/resources/application-prod.yml
+On ddl-auto: none, change "none" to "update"
+
+5. Run the application  
   Local  
     ./mvnw spring-boot:run  
    Docker
     docker-compose up --build
-5. Verify the connection
+6. Verify the connection
    The API will be available at
    > http://localhost:8080  
 
