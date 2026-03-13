@@ -116,7 +116,7 @@ cd issue-tracker-api
     POSTGRES_PASSWORD=
 
 3. Modificar src/main/resources/application-prod.yml  
-En el apartado ddl-auto: none, cambiar el none por auto
+En el apartado ddl-auto: none, cambiar el "none" por "update"
 
 4. Instalar dependencias  
 ./mvnw clean install  
