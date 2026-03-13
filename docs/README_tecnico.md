@@ -113,17 +113,20 @@ cd issue-tracker-api
     Credenciales para el contenedor de la base de datos  
     POSTGRES_DB=  
     POSTGRES_USER=  
-    POSTGRES_PASSWORD=  
+    POSTGRES_PASSWORD=
 
-3. Instalar dependencias  
+3. Modificar src/main/resources/application-prod.yml  
+En el apartado ddl-auto: none, cambiar el none por auto
+
+4. Instalar dependencias  
 ./mvnw clean install  
 
-4. Ejecutar la aplicación  
+5. Ejecutar la aplicación  
   En local  
     ./mvnw spring-boot:run  
   Con Docker
     docker-compose up --build
-5. Verificar la conexión
+6. Verificar la conexión
    La API estará disponible en
    > http://localhost:8080
 
